@@ -1,21 +1,22 @@
 import pytest
+from dash import Dash
 from app import app
 
+# Dash provides an internal test client we can use without Selenium
 @pytest.fixture
-def dash_app():
-    return app
+def test_client():
+    return app.test_client()
 
-def test_header_present(dash_duo, dash_app):
-    dash_duo.start_server(dash_app)
-    header = dash_duo.find_element("h1")
-    assert "Pink Morsel Sales Visualiser" in header.text
+def test_header_present():
+    response = app.test_client().get("/")
+    assert b"Pink Morsel Sales Visualiser" in response.data
 
-def test_graph_present(dash_duo, dash_app):
-    dash_duo.start_server(dash_app)
-    graph = dash_duo.find_element("#sales-line-chart")
-    assert graph is not None
+def test_graph_present():
+    response = app.test_client().get("/")
+    # check ID of line chart
+    assert b"id=\"sales-line-chart\"" in response.data
 
-def test_region_picker_present(dash_duo, dash_app):
-    dash_duo.start_server(dash_app)
-    radio = dash_duo.find_element("#region-picker")
-    assert radio is not None
+def test_region_picker_present():
+    response = app.test_client().get("/")
+    # check ID of region radio buttons
+    assert b"id=\"region-picker\"" in response.data
