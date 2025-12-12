@@ -1,21 +1,17 @@
 from app import app
-from dash import dcc, html
+from dash import html, dcc
 
-# Helper to recursively search for a component type
 def find_components(component, component_type):
     found = []
     if isinstance(component, component_type):
         found.append(component)
-    if hasattr(component, "children"):
-        children = component.children
-
-        if isinstance(children, list):
-            for child in children:
-                found.extend(find_components(child, component_type))
-        else:
-            found.extend(find_components(children, component_type))
+    children = getattr(component, "children", None)
+    if isinstance(children, list):
+        for child in children:
+            found.extend(find_components(child, component_type))
+    elif children is not None:
+        found.extend(find_components(children, component_type))
     return found
-
 
 def test_header_present():
     layout = app.layout
@@ -23,13 +19,11 @@ def test_header_present():
     assert len(headers) >= 1
     assert "Pink Morsel Sales Visualiser" in headers[0].children
 
-
 def test_graph_present():
     layout = app.layout
     graphs = find_components(layout, dcc.Graph)
     assert len(graphs) == 1
     assert graphs[0].id == "sales-line-chart"
-
 
 def test_region_picker_present():
     layout = app.layout
