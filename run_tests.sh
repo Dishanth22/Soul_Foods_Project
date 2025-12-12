@@ -1,35 +1,25 @@
 #!/bin/bash
 
-# Exit immediately on any error
 set -e
 
-# -------------------------------
-# 1. Activate virtual environment
-# -------------------------------
-# Adjust this path if your venv folder has a different name.
+echo "Activating virtual environment..."
+
 if [ -d "venv" ]; then
-    echo "Activating virtual environment..."
     source venv/bin/activate
+elif [ -d ".venv" ]; then
+    source .venv/bin/activate
 else
-    echo "ERROR: Virtual environment 'venv' not found!"
+    echo "❌ No virtual environment found!"
     exit 1
 fi
 
-# -------------------------------
-# 2. Run the test suite
-# -------------------------------
-echo "Running test suite with pytest..."
+echo "Running tests..."
 pytest
 
-TEST_EXIT_CODE=$?
-
-# -------------------------------
-# 3. Exit with CI-friendly code
-# -------------------------------
-if [ $TEST_EXIT_CODE -eq 0 ]; then
-    echo "All tests passed successfully."
+if [ $? -eq 0 ]; then
+    echo "✅ All tests passed!"
     exit 0
 else
-    echo "Some tests FAILED."
+    echo "❌ Tests failed!"
     exit 1
 fi
