@@ -9,10 +9,11 @@ def find_all(component, component_type):
     if isinstance(component, component_type):
         found.append(component)
 
-    # If the component has children, search inside them
+    # Traverse children
     if hasattr(component, "children"):
         children = component.children
 
+        # children can be a list or a single element
         if isinstance(children, list):
             for child in children:
                 found.extend(find_all(child, component_type))
@@ -39,12 +40,13 @@ def test_graph_present():
 def test_region_picker_present():
     layout = app.layout
     radios = find_all(layout, dcc.RadioItems)
-    assert len(radios) == 1  # there is exactly one region picker
+
+    assert len(radios) == 1  # Radio picker should exist
 
     radio = radios[0]
     assert radio.id == "region-picker"
 
     expected_values = {"all", "north", "south", "east", "west"}
-    actual_values = {opt["value"] for opt in radio.options}
+    actual_values = {option["value"] for option in radio.options}
 
     assert actual_values == expected_values
