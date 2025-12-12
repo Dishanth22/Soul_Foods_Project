@@ -2,10 +2,14 @@ import pandas as pd
 from dash import Dash, dcc, html
 import plotly.express as px
 
+# Load cleaned data
 df = pd.read_csv("formatted_sales.csv")
+
+# Convert date column to datetime and sort
 df["date"] = pd.to_datetime(df["date"])
 df = df.sort_values("date")
 
+# Create the line chart
 fig = px.line(
     df,
     x="date",
@@ -14,16 +18,20 @@ fig = px.line(
     labels={"date": "Date", "Sales": "Total Sales ($)"}
 )
 
+# Initialize Dash app
 app = Dash(__name__)
+
 app.layout = html.Div(children=[
-    html.H1(children="Pink Morsel Sales Visualiser", style={"textAlign": "center"}),
-    dcc.Graph(id="sales-line-chart", figure=fig),
-    html.Div(
-        children=("Sales before and after the Pink Morsel price increase on "
-                  "15 January 2021."),
-        style={"textAlign": "center", "marginTop": "20px"}
+    html.H1(
+        children="Pink Morsel Sales Visualiser",
+        style={"textAlign": "center"}
+    ),
+    dcc.Graph(
+        id="sales-line-chart",
+        figure=fig
     )
 ])
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run(debug=True)
+
